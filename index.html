@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Birthday Special</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Playfair+Display:wght@600;700&display=swap');
+
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  letter-spacing: 0.4px;
+  background: #0b0b0b;
+  overflow: hidden;
+  color: white;
+}
+
+.screen {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  position: absolute;
+  width: 100%;
+  top: 0;
+  left: 0;
+}
+
+.hidden { display: none; }
+
+.box {
+  background: rgba(30,30,30,0.95);
+  padding: 30px;
+  border-radius: 16px;
+  max-width: 520px;
+  box-shadow: 0 0 25px rgba(255,0,120,0.4);
+}
+
+button {
+  margin-top: 15px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  background: #ff4d79;
+  color: white;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+/* Cake & Gift */
+.celebration {
+  margin-bottom: 15px;
+}
+
+.cake {
+  font-size: 80px;
+  animation: bounce 1.8s infinite;
+}
+
+.gift {
+  font-size: 55px;
+  animation: shake 1.4s infinite;
+}
+
+@keyframes bounce {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+
+@keyframes shake {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(6deg); }
+  50% { transform: rotate(0deg); }
+  75% { transform: rotate(-6deg); }
+}
+
+/* Typing */
+.typing {
+  font-size: 22px;
+  border-right: 2px solid #ff4d79;
+  white-space: normal;
+  animation: blink 0.8s infinite;
+}
+
+@keyframes blink {
+  50% { border-color: transparent; }
+}
+
+/* Ribbon blast */
+.ribbon {
+  position: absolute;
+  font-size: 28px;
+  animation: ribbonBlast 2.6s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes ribbonBlast {
+  0% { transform: scale(0); opacity: 1; }
+  100% {
+    transform: scale(1.6) translateY(-120vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* Floating couples */
+.couple {
+  position: absolute;
+  font-size: 26px;
+  animation: floatUp 8s linear forwards;
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+@keyframes floatUp {
+  from { transform: translateY(0); opacity: 1; }
+  to { transform: translateY(-120vh); opacity: 0; }
+}
+
+#puzzleContainer {
+  display: grid;
+  grid-template-columns: repeat(5, 80px);
+  grid-template-rows: repeat(5, 80px);
+  gap: 2px;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+.puzzlePiece {
+  width: 80px;
+  height: 80px;
+  background-size: 400px 400px; /* adjust to full image size */
+  cursor: grab;
+  border-radius: 4px;
+  transition: transform 0.2s;
+}
+
+
+
+/* Game */
+input {
+  padding: 10px;
+  width: 80%;
+  border-radius: 6px;
+  border: none;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.progress {
+  height: 8px;
+  background: #333;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 15px;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background: #ff4d79;
+  transition: width 0.4s;
+}
+
+.hint {
+  font-size: 13px;
+  color: #ffb3c6;
+  display: none;
+  margin-top: 8px;
+}
+</style>
+</head>
+
+<body>
+
+<audio id="bgMusic" loop>
+  <source src="happy-birthday.mp3" type="audio/mpeg">
+</audio>
+
+<!-- PAGE 1 -->
+<div class="screen" id="page1">
+  <div class="box">
+    <div class="celebration">
+      <div class="cake">🎂</div>
+      <div class="gift">🎁</div>
+    </div>
+    <p class="typing" id="typingText"></p>
+    <button onclick="startMusic(); ribbonBlast(); nextPage(2)">Continue 💖</button>
+  </div>
+</div>
+
+<!-- PAGE 2 : IMAGE PUZZLE -->
+<div class="screen hidden" id="page2">
+  <div class="box">
+    <h2>🎂 Happy Birthday Sonal 🎂</h2>
+    <p>Arrange the puzzle to reveal your surprise 💕</p>
+    <div id="puzzleContainer"></div>
+    <p id="puzzleHint" style="margin-top:10px; font-size:14px; color:#ffb3c6;"></p>
+  </div>
+</div>
+
+<!-- PAGE 2 -->
+<div class="screen hidden" id="page2">
+  <div class="box">
+    <h2>🎂 Happy Birthday Sonal 🎂</h2>
+    <p>
+      Another year older…<br>
+      Still the cutest 😄❤️<br><br>
+      You make ordinary days special,<br>
+      and special days unforgettable 💕
+    </p>
+    <button onclick="nextPage(3)">Start the Game 🎮</button>
+  </div>
+</div>
+
+<!-- PAGE 3 -->
+<div class="screen hidden" id="page3">
+  <div class="box" id="game">
+    <div class="progress"><div class="progress-bar" id="bar"></div></div>
+    <h2>Stage 1</h2>
+    <p>Where did we first meet?</p>
+    <input id="answer" placeholder="Your answer">
+    <br>
+    <button onclick="startMusic(); check()">Submit</button>
+    <br>
+    <button onclick="showHint()">Hint 💕</button>
+    <div class="hint" id="hint"></div>
+  </div>
+</div>
+
+<script>
+// Image Puzzle
+const puzzleImage = "birthday_image.jpg"; // put your image here (400x400 recommended)
+const puzzleSize = 5; // 5x5 = 25 pieces
+let puzzlePositions = [];
+let dragSrc = null;
+
+function createPuzzle() {
+  const container = document.getElementById("puzzleContainer");
+  container.innerHTML = "";
+  puzzlePositions = [];
+
+  for (let i = 0; i < puzzleSize * puzzleSize; i++) {
+    const row = Math.floor(i / puzzleSize);
+    const col = i % puzzleSize;
+
+    const piece = document.createElement("div");
+    piece.className = "puzzlePiece";
+    piece.style.backgroundImage = `url(${puzzleImage})`;
+    piece.style.backgroundPosition = `-${col*80}px -${row*80}px`;
+    piece.setAttribute("data-correct", i);
+    puzzlePositions.push(piece);
+
+    piece.draggable = true;
+
+    piece.addEventListener("dragstart", dragStart);
+    piece.addEventListener("dragover", dragOver);
+    piece.addEventListener("drop", drop);
+    piece.addEventListener("dragend", dragEnd);
+
+    container.appendChild(piece);
+  }
+
+  // Shuffle pieces
+  shufflePuzzle();
+}
+
+function shufflePuzzle() {
+  const container = document.getElementById("puzzleContainer");
+  for (let i = puzzlePositions.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    container.appendChild(puzzlePositions[j]);
+    [puzzlePositions[i], puzzlePositions[j]] = [puzzlePositions[j], puzzlePositions[i]];
+  }
+}
+
+function dragStart(e) {
+  dragSrc = this;
+  e.dataTransfer.effectAllowed = "move";
+}
+
+function dragOver(e) {
+  e.preventDefault();
+}
+
+function drop(e) {
+  e.preventDefault();
+  if (dragSrc !== this) {
+    const container = document.getElementById("puzzleContainer");
+    const children = Array.from(container.children);
+
+    // Find indexes
+    const srcIndex = children.indexOf(dragSrc);
+    const destIndex = children.indexOf(this);
+
+    // Swap positions in DOM
+    if (srcIndex < destIndex) {
+      container.insertBefore(this, dragSrc);
+      container.insertBefore(dragSrc, children[destIndex + 1] || null);
+    } else {
+      container.insertBefore(dragSrc, this);
+      container.insertBefore(this, children[srcIndex + 1] || null);
+    }
+  }
+  checkPuzzle();
+}
+
+function dragEnd() {
+  dragSrc = null;
+}
+
+// Check if puzzle solved
+function checkPuzzle() {
+  const container = document.getElementById("puzzleContainer");
+  const children = Array.from(container.children);
+  let correct = true;
+  children.forEach((c, i) => {
+    if (parseInt(c.getAttribute("data-correct")) !== i) correct = false;
+  });
+
+  if (correct) {
+    document.getElementById("puzzleHint").innerText = "Puzzle completed! 🎉 Go to the game...";
+    setTimeout(() => nextPage(3), 5000);
+  } else {
+    document.getElementById("puzzleHint").innerText = "";
+  }
+}
+
+// Initialize puzzle when Page 2 shows
+const observer = new MutationObserver(() => {
+  if (!document.getElementById("page2").classList.contains("hidden")) createPuzzle();
+});
+observer.observe(document.getElementById("page2"), { attributes: true, attributeFilter: ["class"] });
+
+
+
+/* Typing */
+const text = "Welcome\u00A0\u00A0Sonal\u00A0\u00A0to\u00A0\u00A0your\u00A0\u00A0Birthday\u00A0\u00A0Special!!\u00A0\u00A0🎉❤️";
+let i = 0;
+function typeText() {
+  if (i < text.length) {
+    typingText.innerText += text.charAt(i++);
+    setTimeout(typeText, 80);
+  }
+}
+typeText();
+
+/* Page switch */
+function nextPage(n) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
+  document.getElementById("page" + n).classList.remove("hidden");
+}
+
+/* Music */
+let musicStarted = false;
+function startMusic() {
+  if (!musicStarted) {
+    bgMusic.volume = 0.5;
+    bgMusic.play().catch(()=>{});
+    musicStarted = true;
+  }
+}
+
+/* Ribbon blast */
+function ribbonBlast() {
+  const icons = ["🎀","🎉","✨","💖"];
+  for (let i = 0; i < 60; i++) {
+    setTimeout(() => {
+      const r = document.createElement("div");
+      r.className = "ribbon";
+      r.innerText = icons[Math.floor(Math.random()*icons.length)];
+      r.style.left = Math.random()*100 + "vw";
+      r.style.bottom = "-30px";
+      document.body.appendChild(r);
+      setTimeout(()=>r.remove(),3000);
+    }, i*35);
+  }
+}
+
+/* Game logic */
+let stage = 1;
+const stages = [
+  { q:"Where did we first meet?", a:["cruise"], h:"It all started here 🛳️" },
+  { q:"What is your biggest question of each day?", a:["lunch"], h:"Same Question Daily 🥘" },
+  { q:"One word that defines us?", a:["sonav"], h:"This is us togehter 💖" },
+  { q:"Where do our mornings begin?", a:["coffee"], h:"First thing every morning ☀️" }
+];
+
+function showHint() {
+  hint.style.display = "block";
+  hint.innerText = stages[stage-1].h;
+}
+
+function updateProgress() {
+  bar.style.width = ((stage-1)/stages.length)*100 + "%";
+}
+
+function check() {
+  const ans = answer.value.toLowerCase().trim();
+  if (stages[stage-1].a.includes(ans)) {
+    stage++;
+    stage <= stages.length ? loadStage() : finalReveal();
+  } else {
+    alert("Almost 😄 Try again");
+  }
+}
+
+function loadStage() {
+  const s = stages[stage-1];
+  game.innerHTML = `
+    <div class="progress"><div class="progress-bar" id="bar"></div></div>
+    <h2>Stage ${stage}</h2>
+    <p>${s.q}</p>
+    <input id="answer">
+    <br>
+    <button onclick="startMusic(); check()">Submit</button>
+    <br>
+    <button onclick="showHint()">Hint 💕</button>
+    <div class="hint" id="hint"></div>
+  `;
+  updateProgress();
+}
+
+function finalReveal() {
+  game.innerHTML = `
+    <h2>💖 YOU DID IT 💖</h2>
+    <p>Your surprise is waiting…</p>
+    <b>Go to the kitchen ❤️</b>
+  `;
+  explodeLove();
+}
+
+/* Floating couples */
+setInterval(() => {
+  const c = document.createElement("div");
+  c.className = "couple";
+  c.innerText = "🎁";
+  c.style.left = Math.random()*100+"vw";
+  c.style.bottom = "-40px";
+  document.body.appendChild(c);
+  setTimeout(()=>c.remove(),8000);
+},600);
+
+/* Final explosion */
+function explodeLove() {
+  for(let i=0;i<70;i++){
+    setTimeout(()=>{
+      const c=document.createElement("div");
+      c.className="couple";
+      c.innerText="😍";
+      c.style.left=(40+Math.random()*20)+"vw";
+      c.style.bottom=(40+Math.random()*20)+"vh";
+      document.body.appendChild(c);
+      setTimeout(()=>c.remove(),5000);
+    },i*40);
+  }
+}
+</script>
+
+</body>
+</html>
