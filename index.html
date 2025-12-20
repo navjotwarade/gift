@@ -219,7 +219,7 @@ input {
   <div class="box" id="game">
     <div class="progress"><div class="progress-bar" id="bar"></div></div>
     <h2>Stage 1</h2>
-    <p>Where did we first meet?</p>
+    <p>I mix things wherever you go, From fruits to fitness. Small in size, big on power. Who am I?</p>
     <input id="answer" placeholder="Your answer">
     <br>
     <button onclick="startMusic(); check()">Submit</button>
@@ -381,10 +381,10 @@ function ribbonBlast() {
 /* Game logic */
 let stage = 1;
 const stages = [
-  { q:"Where did we first meet?", a:["cruise"], h:"It all started here 🛳️" },
-  { q:"What is your biggest question of each day?", a:["lunch"], h:"Same Question Daily 🥘" },
-  { q:"One word that defines us?", a:["sonav"], h:"This is us togehter 💖" },
-  { q:"Where do our mornings begin?", a:["coffee"], h:"First thing every morning ☀️" }
+  { q:"I mix things wherever you go, From fruits to fitness. Small in size, big on power. Who am I?", a:["blender"], h:"Smooth mornings, healthy goals. I fit in a bag" },
+  { q:"I’m green, calm, and full of balance. I don’t rush, I focus. I need a bowl, a whisk, and patience. What am I?", a:["matcha"], h:"Not coffee, but still energizing. Whisk me, Don't Stir me" },
+  { q:"I care for what carries you everywhere, After rain, workouts, or long days. I remove moisture, not style. What am I?", a:["shoe dryer"], h:"I work when shoes get tired. Warm air, happy feet" },
+  { q:"I wake you up without a sound, I hiss, I steam, I work under pressure. I turn tiny beans into bold mornings. What am I?", a:["coffee machine"], h:"Our new morning ritual" }
 ];
 
 function showHint() {
@@ -424,9 +424,9 @@ function loadStage() {
 
 function finalReveal() {
   game.innerHTML = `
-    <h2>💖 YOU DID IT 💖</h2>
-    <p>Your surprise is waiting…</p>
-    <b>Go to the kitchen ❤️</b>
+    <h2>💖 Four surprises, four smiles…Because I notice the little things in your everyday life 💕  💖</h2>
+    <p>Happy Birthday, my love 🎂✨</p>
+    <b>❤️</b>
   `;
   explodeLove();
 }
